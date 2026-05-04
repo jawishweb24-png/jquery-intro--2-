@@ -175,6 +175,7 @@ $(document).ready(function() {
             $("#orderErr").text("");
         }
     });
-    $("#shipstate").change(function() {
+});
+$("#shipstate").change(function() {
     $(".qty").first().trigger("blur"); // Re-runs the calculation logic
 });
