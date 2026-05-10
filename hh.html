@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia Challenge</title>
+    <style>
+        /* Your Provided CSS */
+        body { background-color: darkseagreen; background-size: cover; background-repeat: repeat-y; }
+        main { width: 50em; margin: 1em auto; border: outset thick darkgreen; background-color: cornsilk; padding: 1em; font-family: Arial, Helvetica, sans-serif; }
+        #specials { width: 10em; float: right; padding: 0.5em 1em; border: medium darkgreen groove; border-radius: 10px; margin-left: 1em; }
+        #answers { list-style: none; padding: 0; text-align: center; }
+        #answers li { margin-bottom: 0.5em; }
+        .error { color: red; font-weight: bold; }
+        .success { color: darkgreen; font-weight: bold; }
+        a:link, a:visited { color: darkgreen; text-decoration: none; font-weight: bold; border-bottom: 1px dotted darkgreen; }
+        legend { font-family: "Comic Sans MS"; color: darkgreen; }
+        h1, h2, h3 { color: darkgreen; font-family: "Comic Sans MS"; text-align: center; line-height: 1.2em; }
+        input[type="submit"], button { background-color: cornsilk; font-size: 1em; border-radius: 5px; border: thin outset darkgreen; cursor: pointer; padding: 0.5em 1em; }
+        #place { text-align: center; margin-top: 1em; }
+        #main { clear: both; padding-top: 1em; }
+        .Spring { background-color: #afeeee; padding: 10px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+<main>
+    <aside id="specials">
+        <h3>Score</h3>
+        <p id="score-display">Correct: 0 / 3</p>
+    </aside>
+
+    <h1>Web Dev Trivia</h1>
+    <div id="game-container" class="Spring">
+        <div id="place">
+            <h2 id="question-text">Ready to test your knowledge?</h2>
+            <button id="start-btn" onclick="initGame()">Start Game</button>
+        </div>
+        
+        <ul id="answers">
+            <!-- Questions will be injected here -->
+        </ul>
+
+        <div id="feedback" style="text-align: center; min-height: 1.5em;"></div>
+    </div>
+
+    <div id="main">
+        <p id="progress-text" style="text-align: center;"></p>
+    </div>
+</main>
+
+<script>
+    // 1. Trivia Data Array
+    const triviaData = [
+        {
+            question: "What does HTML stand for?",
+            options: ["HyperText Markup Language", "High Tech Machine Language", "Hyperlink Text Management Law"],
+            correct: 0
+        },
+        {
+            question: "Which CSS property changes text color?",
+            options: ["text-style", "font-color", "color"],
+            correct: 2
+        },
+        {
+            question: "Which tag is used for the largest heading?",
+            options: ["<h6>", "<h1>", "<head>"],
+            correct: 1
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    // 2. Initialize Game Function
+    function initGame() {
+        currentQuestionIndex = 0;
+        score = 0;
+        document.getElementById('start-btn').style.display = 'none';
+        updateScore();
+        showQuestion();
+    }
+
+    // 3. Track Progress & Show Question
+    function showQuestion() {
+        const feedback = document.getElementById('feedback');
+        const questionText = document.getElementById('question-text');
+        const answersList = document.getElementById('answers');
+        const progress = document.getElementById('progress-text');
+
+        feedback.innerHTML = "";
+        answersList.innerHTML = "";
+        
+        if (currentQuestionIndex < triviaData.length) {
+            let currentQ = triviaData[currentQuestionIndex];
+            questionText.innerText = currentQ.question;
+            progress.innerText = `Question ${currentQuestionIndex + 1} of ${triviaData.length}`;
+
+            currentQ.options.forEach((option, index) => {
+                const li = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = "#";
+                link.innerText = option;
+                link.onclick = (e) => {
+                    e.preventDefault();
+                    checkAnswer(index);
+                };
+                li.appendChild(link);
+                answersList.appendChild(li);
+            });
+        } else {
+            endGame();
+        }
+    }
+
+    // 4. Check Response Function
+    function checkAnswer(selectedIndex) {
+        const feedback = document.getElementById('feedback');
+        const correctIndex = triviaData[currentQuestionIndex].correct;
+
+        if (selectedIndex === correctIndex) {
+            score++;
+            feedback.innerHTML = '<span class="success">Correct! Well done.</span>';
+        } else {
+            feedback.innerHTML = `<span class="error">Wrong! The answer was: ${triviaData[currentQuestionIndex].options[correctIndex]}</span>`;
+        }
+
+        updateScore();
+        
+        // Wait a moment so user sees feedback, then next question
+        currentQuestionIndex++;
+        setTimeout(showQuestion, 1500);
+    }
+
+    function updateScore() {
+        document.getElementById('score-display').innerText = `Correct: ${score} / ${triviaData.length}`;
+    }
+
+    function endGame() {
+        document.getElementById('question-text').innerText = "Game Over!";
+        document.getElementById('answers').innerHTML = `<li>Final Score: ${score} out of ${triviaData.length}</li>`;
+        document.getElementById('progress-text').innerText = "";
+        
+        const restartBtn = document.createElement('button');
+        restartBtn.innerText = "Restart Game";
+        restartBtn.onclick = initGame;
+        document.getElementById('feedback').innerHTML = "";
+        document.getElementById('feedback').appendChild(restartBtn);
+    }
+</script>
+
+</body>
+</html>
